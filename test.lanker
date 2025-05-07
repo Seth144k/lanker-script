@@ -1,0 +1,5 @@
+println("hihi");
+
+functionlocal faggy() -> void {
+    let local x: int = 20;
+}
