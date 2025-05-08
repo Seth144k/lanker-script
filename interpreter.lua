@@ -1,3 +1,5 @@
+local parser = require("parser.nodes")
+
 local interpreter = {}
 
 function interpreter:load()
@@ -34,6 +36,14 @@ function interpreter:registerFunction(name, params, returnType, body)
 end
 
 function interpreter:interpret(tokens)
+    local nodes = parser.parse(tokens)
+
+    for _, node in ipairs(nodes) do
+        self:evaluateNode(node)
+    end
+end
+
+--[[function interpreter:interpret(tokens)
     local i = 1
 
     local function current()
@@ -247,12 +257,7 @@ function interpreter:interpret(tokens)
                 returnType = returnType,
                 body = body
             }
-
-            print("Defined global function '" .. funcName .. "' with return type '" .. returnType .. "' and parameters: " .. table.concat(params, ", "))
-
-            if current() and current().type == "SEMICOLON" then
-                advance()
-            end
+            
         elseif current().type == "KEYWORD" or current().type == "IDENT" then
             local funcName = current().value
             local func = self.symbolTable.global[funcName]
@@ -295,6 +300,6 @@ function interpreter:interpret(tokens)
             error("Unexpected token: " .. current().type .. " (" .. tostring(current().value) .. ")")
         end
     end
-end
+end]]--
 
 return interpreter
