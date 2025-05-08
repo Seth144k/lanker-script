@@ -1,5 +1,5 @@
 local lexer = require("lexer")
-local interpreter = require("interpreter")
+local ast = require("ast")
 local parser = require("parser.parser")
 
 local lanker = {}
@@ -11,8 +11,10 @@ function lanker.runFile(filename)
     end
     local content = file:read("*a")
     file:close()
-    local tokens = lexer.tokenize(content)
-    interpreter:interpret(tokens)
+    local tokens = lexer:tokenize(content)
+    local parsed = parser:parse(tokens)
+    local result = ast:eval(parsed, {})
+    print("output: ", result)
 end
 
 return lanker

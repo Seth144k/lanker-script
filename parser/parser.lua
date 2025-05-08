@@ -1,37 +1,29 @@
-local node = require("parser.nodes")
-
 local parser = {}
 
 function parser:parse(tokens)
-    local i = 1
+    local function parse_expr()
+        local token = table.remove(tokens, 1)
+        if not token then
+            return nil  -- Prevent empty token errors
+        end
 
-    local function current() return tokens[i] end
-    local function advance() i = i + 1 end
-
-    local nodes = {}
-
-    while i <= #tokens do
-        local token = current()
-
-        if token.type == "KEYWORD" and token.value == "let" then
-            advance()
-            local scope = current().value
-            advance()
-            local name = current().value
-            advance()
-            advance() -- skip ':'
-            local varType = current().value
-            advance()
-            advance() -- skip '='
-            local value = current()
-            advance()
-            table.insert(nodes, node.VariableDeclaration(scope, name, varType, value))
+        if token == "(" then
+            local list = {}
+            while tokens[1] and tokens[1] ~= ")" do
+                table.insert(list, parse_expr())
+            end
+            if tokens[1] == ")" then
+                table.remove(tokens, 1)  -- Remove the closing ')'
+            end
+            return list
+        elseif tonumber(token) then
+            return tonumber(token)  -- Convert numbers to actual number values
         else
-            error("Unhandled token")
+            return token  -- Return symbol as string (e.g., operator or variable)
         end
     end
 
-    return nodes
+    return parse_expr()
 end
 
 return parser

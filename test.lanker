@@ -1,5 +1,1 @@
-println("hihi");
-
-functionglobal faggy() -> void {
-    let local x: int = 20;
-}
+(* 3 999)
